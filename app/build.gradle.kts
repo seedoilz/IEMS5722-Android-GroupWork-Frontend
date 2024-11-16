@@ -5,6 +5,7 @@ plugins {
 //    id("org.jetbrains.kotlin.jvm") version "1.9.23" // 添加 Kotlin 插件
     id("com.diffplug.spotless") version "6.25.0" // Spotless 插件
     id("maven-publish") // Maven 发布插件
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -81,6 +82,9 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-moshi:$retrofitVersion")
     implementation("com.squareup.retrofit2:converter-scalars:$retrofitVersion")
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
+
+    implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
+    implementation("com.google.firebase:firebase-analytics")
 }
 
 spotless {

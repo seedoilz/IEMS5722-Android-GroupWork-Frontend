@@ -227,8 +227,8 @@ interface DefaultApi {
      * @param dateString 
      * @return [Call]<[Result]>
      */
-    @POST("private_message/delete")
-    fun privateMessageDeletePost(@Query("fromUserId") fromUserId: kotlin.Int, @Query("toUserId") toUserId: kotlin.Int, @Query("dateString") dateString: kotlin.String): Call<Result>
+    @POST("private_message/get_incrementally")
+    fun privateMessageGetIncrementallyPost(@Query("fromUserId") fromUserId: kotlin.Int, @Query("toUserId") toUserId: kotlin.Int, @Query("dateString") dateString: kotlin.String): Call<Result>
 
     /**
      * send
@@ -445,4 +445,15 @@ interface DefaultApi {
     @POST("user/update")
     fun userUpdatePost(@Body user: User? = null): Call<Result>
 
+    /**
+     * submit
+     *
+     * Responses:
+     *  - 200:
+     *
+     * @param token
+     * @return [Call]<[Result]>
+     */
+    @POST("token/submit")
+    fun tokenSubmitPost(@Query("token") token: kotlin.String): Call<Result>
 }
