@@ -1,7 +1,6 @@
-package com.example.iems5722
+package com.example.iems5722.component
 
-import android.util.Log
-import android.view.WindowInsetsAnimation
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -9,12 +8,10 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.openapitools.client.models.UserVO
 import org.openapitools.client.apis.DefaultApi
 import retrofit2.Call
@@ -31,6 +28,8 @@ fun LoginScreen(
 ) {
     val username = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
+    val loginError = remember { mutableStateOf<String?>(null) }
+    val context = LocalContext.current // 获取当前 Context
 
     Column(
         modifier = Modifier
@@ -65,29 +64,31 @@ fun LoginScreen(
             onClick = {
                 // 调用登录API逻辑
                 val userVO = UserVO(name = username.value, password = password.value)
-                val call = apiService.userSignInPost(userVO)
-                // 使用协程来进行异步调用或者Retrofit的回调
-                CoroutineScope(Dispatchers.IO).launch {
-                    call.enqueue(object : Callback<Result> {
-                        override fun onResponse(call: Call<Result>, response: Response<Result>) {
-                            if (response.isSuccessful && response.body()?.code == 200) {
-                                // 登录成功
+                apiService.userSignInPost(userVO).enqueue(object : Callback<Result> {
+                    override fun onResponse(call: Call<Result>, response: Response<Result>) {
+                        if (response.isSuccessful && response.body()?.code == 200) {
+                            // 获取返回的 token
+                            val token = response.body()?.data?.get("token")
+
+                            // 保存 token 到 SharedPreferences
+                            token?.let {
+                                saveTokenToPreferences(context, it.toString())
                                 loggedIn.value = true
                                 navController.navigate("home")
-                            } else {
-                                // 登录失败，提示用户
-                                Log.d("LoginScreen", "登录失败: $userVO")
-                                Log.d("LoginScreen", "登录失败: ${response.body()?.code}")
-//                                println("登录失败: ${response.errorBody()?.string()}")
+                            } ?: run {
+                                loginError.value = "Failed to retrieve token."
                             }
+                        } else {
+                            // 登录失败
+                            loginError.value = "Login failed: ${response.body()?.message ?: "Unknown error"}"
                         }
+                    }
 
-                        override fun onFailure(call: Call<Result>, t: Throwable) {
-                            // 网络请求失败，提示用户
-                            println("请求失败: ${t.message}")
-                        }
-                    })
-                }
+                    override fun onFailure(call: Call<Result>, t: Throwable) {
+                        // 网络请求失败
+                        loginError.value = "Network request failed: ${t.message}"
+                    }
+                })
             },
 //            onClick = {
 //                // 登录验证逻辑（待补充，例如与服务器通信）
@@ -111,3 +112,11 @@ fun LoginScreen(
         }
     }
 }
+
+fun saveTokenToPreferences(context: Context, token: String) {
+    val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+    val editor = sharedPreferences.edit()
+    editor.putString("token", token)
+    editor.apply() // 异步提交
+}
+

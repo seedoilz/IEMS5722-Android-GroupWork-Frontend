@@ -1,4 +1,4 @@
-package com.example.iems5722
+package com.example.iems5722.activity
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -23,36 +23,13 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.getValue
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.iems5722.RetrofitInstance.apiService
+import com.example.iems5722.component.ContactsScreen
+import com.example.iems5722.component.HomeScreen
+import com.example.iems5722.component.LoginScreen
+import com.example.iems5722.component.ProfileScreen
+import com.example.iems5722.component.RegisterScreen
 import org.openapitools.client.apis.DefaultApi
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import com.squareup.moshi.JsonClass
-
-@JsonClass(generateAdapter = true)
-data class UserVO(
-    val username: String,
-    val password: String
-)
-
-val moshi = Moshi.Builder()
-    .add(KotlinJsonAdapterFactory()) // 添加 Kotlin 适配器
-    .build()
-
-object RetrofitInstance {
-    private val retrofit by lazy {
-        Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:3456")
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .build()
-    }
-
-    val apiService: DefaultApi by lazy {
-        retrofit.create(DefaultApi::class.java)
-    }
-}
+import org.openapitools.client.infrastructure.ApiClient
 
 
 class MainActivity : ComponentActivity() {
@@ -62,6 +39,7 @@ class MainActivity : ComponentActivity() {
             IEMS5722AndroidGroupWorkFrontendTheme {
                 val navController = rememberNavController()
                 val loggedIn = remember { mutableStateOf(false) }
+                val apiService = ApiClient().createService(DefaultApi::class.java)
 
                 Scaffold(
                     bottomBar = {
