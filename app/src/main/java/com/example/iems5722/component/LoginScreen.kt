@@ -83,10 +83,10 @@ fun LoginScreen(
                         if (response.isSuccessful && response.body()?.code == 200) {
                             // 获取返回的 token
                             val token = response.body()?.data?.get("token")
-
+                            val userId = response.body()?.data?.get("id")
                             // 保存 token 到 SharedPreferences
                             token?.let {
-                                saveTokenToPreferences(context, it.toString())
+                                saveTokenToPreferences(context, it.toString(), userId.toString())
                                 loggedIn.value = true
                                 navController.navigate("home")
                             } ?: run {
@@ -122,10 +122,12 @@ fun LoginScreen(
     }
 }
 
-fun saveTokenToPreferences(context: Context, token: String) {
+fun saveTokenToPreferences(context: Context, token: String, userId: String) {
     val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
     val editor = sharedPreferences.edit()
     editor.putString("token", token)
+    editor.putString("userId", userId)
+    println(userId)
     editor.apply() // 异步提交
 }
 

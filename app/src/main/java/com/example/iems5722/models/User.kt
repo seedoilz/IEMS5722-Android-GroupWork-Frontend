@@ -46,11 +46,11 @@ data class User (
 
     /*  */
     @Json(name = "name")
-    val name: kotlin.String? = null,
+    var name: kotlin.String? = null,
 
     /*  */
     @Json(name = "email")
-    val email: kotlin.String? = null,
+    var email: kotlin.String? = null,
 
     /*  */
     @Json(name = "avatar_url")

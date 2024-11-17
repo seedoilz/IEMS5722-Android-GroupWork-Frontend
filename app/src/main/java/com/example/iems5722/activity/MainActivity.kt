@@ -58,7 +58,7 @@ class MainActivity : ComponentActivity() {
                         composable("register") { RegisterScreen(navController, apiService) }
                         composable("home") { HomeScreen() }
                         composable("contacts") { ContactsScreen() }
-                        composable("profile") { ProfileScreen() }
+                        composable("profile") { ProfileScreen(navController) }
                     }
                 }
             }
