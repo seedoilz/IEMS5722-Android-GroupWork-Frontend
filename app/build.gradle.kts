@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 //    id("org.jetbrains.kotlin.jvm") version "1.9.23" // 添加 Kotlin 插件
+//    id("com.android.application") version "8.7.1" apply false
     id("com.diffplug.spotless") version "6.25.0" // Spotless 插件
     id("maven-publish") // Maven 发布插件
     id("com.google.gms.google-services")
@@ -62,6 +63,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.navigation.runtime.ktx)
+    implementation(libs.androidx.navigation.compose)
 
     // Testing dependencies
     testImplementation(libs.junit)
@@ -85,6 +88,13 @@ dependencies {
 
     implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
     implementation("com.google.firebase:firebase-analytics")
+
+    // Retrofit and Moshi dependencies
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.moshi:moshi:1.12.0")
+    implementation ("com.squareup.moshi:moshi-kotlin:1.12.0")
+    implementation ("com.squareup.retrofit2:converter-moshi:2.9.0")
+
 }
 
 spotless {

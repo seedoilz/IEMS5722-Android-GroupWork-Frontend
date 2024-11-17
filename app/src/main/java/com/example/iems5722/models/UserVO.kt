@@ -17,7 +17,6 @@ package org.openapitools.client.models
 
 
 import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
 
 /**
  * 
@@ -28,19 +27,19 @@ import com.squareup.moshi.JsonClass
  */
 
 
-data class UserVO (
+data class UserVO(
 
     /* 用户名 */
     @Json(name = "name")
-    val name: kotlin.String? = null,
+    val name: String? = null,
 
     /* 密码明文 */
     @Json(name = "password")
-    val password: kotlin.String? = null,
+    val password: String? = null,
 
     /* 电子邮箱 */
     @Json(name = "email")
-    val email: kotlin.String? = null
+    val email: String? = null,
 
 ) {
 
