@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(paddingValues)
                     ) {
                         composable("login") { LoginScreen(navController,loggedIn, apiService) }
-                        composable("register") { RegisterScreen(navController) }
+                        composable("register") { RegisterScreen(navController, apiService) }
                         composable("home") { HomeScreen() }
                         composable("contacts") { ContactsScreen() }
                         composable("profile") { ProfileScreen() }

@@ -60,8 +60,22 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        // 显示错误信息
+        loginError.value?.let {
+            Text(
+                text = it,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
         Button(
             onClick = {
+                if (username.value.isBlank() || password.value.isBlank()) {
+                    loginError.value = "Please input your user name and password"
+                    return@Button
+                }
                 // 调用登录API逻辑
                 val userVO = UserVO(name = username.value, password = password.value)
                 apiService.userSignInPost(userVO).enqueue(object : Callback<Result> {
@@ -90,11 +104,6 @@ fun LoginScreen(
                     }
                 })
             },
-//            onClick = {
-//                // 登录验证逻辑（待补充，例如与服务器通信）
-//                loggedIn.value = true
-//                navController.navigate("home")
-//            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Sign in")
