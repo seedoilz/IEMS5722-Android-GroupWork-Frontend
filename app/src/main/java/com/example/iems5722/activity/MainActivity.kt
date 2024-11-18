@@ -23,10 +23,13 @@ import com.example.iems5722.ui.theme.IEMS5722AndroidGroupWorkFrontendTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.getValue
+import androidx.navigation.NavType
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navArgument
 import com.example.iems5722.component.AddFriendScreen
 import com.example.iems5722.component.ContactsScreen
 import com.example.iems5722.component.EditProfileScreen
+import com.example.iems5722.component.FriendDetailScreen
 import com.example.iems5722.component.HomeScreen
 import com.example.iems5722.component.LoginScreen
 import com.example.iems5722.component.ProfileScreen
@@ -64,6 +67,13 @@ class MainActivity : ComponentActivity() {
                         composable("profile") { ProfileScreen(navController,loggedIn) }
                         composable("edit_profile") { EditProfileScreen(navController) }
                         composable("add_friend") { AddFriendScreen(navController) }
+                        composable(
+                            route = "friend_detail/{friendId}",
+                            arguments = listOf(navArgument("friendId") { type = NavType.IntType })
+                        ) { backStackEntry ->
+                            val friendId = backStackEntry.arguments?.getInt("friendId") ?: -1
+                            FriendDetailScreen(friendId, navController)
+                        }
                     }
                 }
             }

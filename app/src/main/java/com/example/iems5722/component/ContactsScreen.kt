@@ -29,6 +29,11 @@ fun ContactsScreen(navController: NavController) {
     val context = LocalContext.current
     val userId = getUserId(context)?.toIntOrNull()
     val contacts = remember { mutableStateListOf<Map<String, Any>>() }
+    val predefinedContacts = listOf(
+        mapOf("id" to 1, "friendName" to "Alice"),
+        mapOf("id" to 2, "friendName" to "Bob"),
+        mapOf("id" to 3, "friendName" to "Charlie")
+    )
     var isLoading by remember { mutableStateOf(false) }
     val token = context.getSharedPreferences("AppPreferences", MODE_PRIVATE).getString("token", null)
     println("Retrieved token: $token")
@@ -39,14 +44,15 @@ fun ContactsScreen(navController: NavController) {
             .header("Authorization", "Bearer $token")
             .build()
         chain.proceed(request)
-
     }
 
     val apiService = ApiClient().addAuthorization("BearerToken", authorizationInterceptor).createService(DefaultApi::class.java)
-    // 加载联系人
+
+    // Load contacts
     LaunchedEffect(userId) {
         if (userId != -1) {
             isLoading = true
+            contacts.addAll(predefinedContacts)
             apiService.friendAllPost(userId).enqueue(object : Callback<Result> {
                 override fun onResponse(call: Call<Result>, response: Response<Result>) {
                     isLoading = false
@@ -111,7 +117,7 @@ fun ContactsScreen(navController: NavController) {
                     contentPadding = PaddingValues(16.dp)
                 ) {
                     items(contacts) { contact ->
-                        ContactItem(contact, apiService, contacts)
+                        ContactItem(contact, navController)
                     }
                 }
             }
@@ -120,10 +126,9 @@ fun ContactsScreen(navController: NavController) {
 }
 
 @Composable
-fun ContactItem(contact: Map<String, Any>, apiService: DefaultApi, contacts: MutableList<Map<String, Any>>) {
-    val context = LocalContext.current
+fun ContactItem(contact: Map<String, Any>, navController: NavController) {
     val name = contact["friendName"] as? String ?: "Unknown"
-    val id = (contact["id"] as? Double)?.toInt() // 修复类型转换错误
+    val id = (contact["id"] as? Int) ?: -1
 
     Row(
         modifier = Modifier
@@ -133,26 +138,9 @@ fun ContactItem(contact: Map<String, Any>, apiService: DefaultApi, contacts: Mut
     ) {
         Text(text = name, modifier = Modifier.weight(1f), fontSize = 16.sp)
         Button(onClick = {
-            id?.let { deleteFriend(apiService, it, contacts, context) }
+            navController.navigate("friend_detail/$id")
         }) {
-            Text("Delete")
+            Text("View Details")
         }
     }
-}
-
-private fun deleteFriend(apiService: DefaultApi, friendId: Int, contacts: MutableList<Map<String, Any>>, context: android.content.Context) {
-    apiService.friendDeletePost(friendId).enqueue(object : Callback<Result> {
-        override fun onResponse(call: Call<Result>, response: Response<Result>) {
-            if (response.isSuccessful && response.body()?.code == 200) {
-                contacts.removeAll { it["id"] == friendId }
-                Toast.makeText(context, "Friend deleted", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(context, "Failed to delete friend", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        override fun onFailure(call: Call<Result>, t: Throwable) {
-            Toast.makeText(context, "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
-        }
-    })
 }
