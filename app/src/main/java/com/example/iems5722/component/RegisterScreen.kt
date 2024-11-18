@@ -21,6 +21,7 @@ fun RegisterScreen(navController: NavController, apiService: DefaultApi) {
     val username = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
     val confirmPassword = remember { mutableStateOf("") }
+    val email = remember { mutableStateOf("") }
     val registerError = remember { mutableStateOf<String?>(null) }
 
     Column(
@@ -37,6 +38,14 @@ fun RegisterScreen(navController: NavController, apiService: DefaultApi) {
             value = username.value,
             onValueChange = { username.value = it },
             label = { Text("User Name") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = email.value,
+            onValueChange = { email.value = it },
+            label = { Text("Email (optional)") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -83,7 +92,7 @@ fun RegisterScreen(navController: NavController, apiService: DefaultApi) {
                     return@Button
                 }
 
-                val userVO = UserVO(name = username.value, password = password.value)
+                val userVO = UserVO(name = username.value, password = password.value, email = email.value)
                 apiService.userRegisterPost(userVO).enqueue(object : Callback<Result> {
                     override fun onResponse(call: Call<Result>, response: Response<Result>) {
                         if (response.isSuccessful && response.body()?.code == 200) {
