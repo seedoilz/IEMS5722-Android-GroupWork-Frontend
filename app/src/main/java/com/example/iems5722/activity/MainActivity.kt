@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
                         composable("register") { RegisterScreen(navController, apiService) }
                         composable("home") { HomeScreen() }
                         composable("contacts") { ContactsScreen() }
-                        composable("profile") { ProfileScreen(navController) }
+                        composable("profile") { ProfileScreen(navController,loggedIn) }
                         composable("edit_profile") { EditProfileScreen(navController) }
                     }
                 }
@@ -74,7 +74,8 @@ fun BottomNavigationBar(navController: NavController) {
     val currentRoute = navBackStackEntry?.destination?.route
 
     NavigationBar(
-        containerColor = MaterialTheme.colorScheme.primary
+        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        contentColor = MaterialTheme.colorScheme.onSurfaceVariant
     ) {
         NavigationBarItem(
             icon = { Icon(Icons.Default.Home, contentDescription = "Home") },

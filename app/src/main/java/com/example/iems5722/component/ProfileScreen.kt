@@ -35,7 +35,7 @@ import org.openapitools.client.models.Result
 
 
 @Composable
-fun ProfileScreen(navController: NavController) {
+fun ProfileScreen(navController: NavController, loggedIn: MutableState<Boolean>) {
     val context = LocalContext.current
     val userInfo = remember { mutableStateOf(User(name = "Unknown User", avatarUrl = "", email = "Unknown Email")) }
     val userId = getUserId(context)?.toIntOrNull()
@@ -163,6 +163,7 @@ fun ProfileScreen(navController: NavController) {
             onClick = {
                 clearUserId(context)
                 navController.navigate("login") {
+                    loggedIn.value = false
                     popUpTo("home") { inclusive = true } // 清除返回栈
                 }
             },
