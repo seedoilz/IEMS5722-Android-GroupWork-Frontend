@@ -62,7 +62,6 @@ fun EditProfileScreen(navController: NavController) {
             })
         }
     }
-
     Column(
         modifier = Modifier
             .fillMaxSize()

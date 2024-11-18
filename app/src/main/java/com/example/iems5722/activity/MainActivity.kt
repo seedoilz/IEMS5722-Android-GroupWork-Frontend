@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -23,6 +24,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.getValue
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.iems5722.component.AddFriendScreen
 import com.example.iems5722.component.ContactsScreen
 import com.example.iems5722.component.EditProfileScreen
 import com.example.iems5722.component.HomeScreen
@@ -58,9 +60,10 @@ class MainActivity : ComponentActivity() {
                         composable("login") { LoginScreen(navController,loggedIn, apiService) }
                         composable("register") { RegisterScreen(navController, apiService) }
                         composable("home") { HomeScreen() }
-                        composable("contacts") { ContactsScreen() }
+                        composable("contacts") { ContactsScreen(navController) }
                         composable("profile") { ProfileScreen(navController,loggedIn) }
                         composable("edit_profile") { EditProfileScreen(navController) }
+                        composable("add_friend") { AddFriendScreen(navController) }
                     }
                 }
             }
@@ -95,7 +98,7 @@ fun BottomNavigationBar(navController: NavController) {
             }
         )
         NavigationBarItem(
-            icon = { Icon(Icons.Default.Call, contentDescription = "Contacts") },
+            icon = { Icon(Icons.Default.Person, contentDescription = "Contacts") },
             label = { Text("Contacts") },
             selected = currentRoute == "contacts",
             onClick = {
@@ -111,7 +114,7 @@ fun BottomNavigationBar(navController: NavController) {
             }
         )
         NavigationBarItem(
-            icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
+            icon = { Icon(Icons.Default.Menu, contentDescription = "Profile") },
             label = { Text("Settings") },
             selected = currentRoute == "profile",
             onClick = {
