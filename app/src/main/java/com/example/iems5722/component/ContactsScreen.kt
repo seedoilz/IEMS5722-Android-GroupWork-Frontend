@@ -2,6 +2,8 @@ package com.example.iems5722.component
 
 import android.content.Context.MODE_PRIVATE
 import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -22,7 +25,6 @@ import org.openapitools.client.models.Result
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContactsScreen(navController: NavController) {
@@ -31,12 +33,14 @@ fun ContactsScreen(navController: NavController) {
     val contacts = remember { mutableStateListOf<Map<String, Any>>() }
     val predefinedContacts = listOf(
         mapOf("id" to 1, "friendName" to "Alice"),
+        mapOf("id" to 1, "friendName" to "Andy"),
         mapOf("id" to 2, "friendName" to "Bob"),
-        mapOf("id" to 3, "friendName" to "Charlie")
+        mapOf("id" to 3, "friendName" to "Charlie"),
+        mapOf("id" to 1, "friendName" to "Zoe"),
+        mapOf("id" to 5, "friendName" to "Eve")
     )
     var isLoading by remember { mutableStateOf(false) }
     val token = context.getSharedPreferences("AppPreferences", MODE_PRIVATE).getString("token", null)
-    println("Retrieved token: $token")
 
     val authorizationInterceptor = Interceptor { chain ->
         val original = chain.request()
@@ -110,14 +114,30 @@ fun ContactsScreen(navController: NavController) {
                     Text(text = "No contacts found", fontSize = 16.sp)
                 }
             } else {
+                val groupedContacts = contacts.groupBy {
+                    (it["friendName"] as? String)?.firstOrNull()?.uppercase() ?: "#"
+                }.toSortedMap()
+
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(padding),
                     contentPadding = PaddingValues(16.dp)
                 ) {
-                    items(contacts) { contact ->
-                        ContactItem(contact, navController)
+                    groupedContacts.forEach { (initial, group) ->
+                        item {
+                            Text(
+                                text = initial,
+                                style = MaterialTheme.typography.titleSmall,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp),
+                                fontSize = 18.sp
+                            )
+                        }
+                        items(group) { contact ->
+                            ContactItem(contact, navController)
+                        }
                     }
                 }
             }
@@ -133,14 +153,32 @@ fun ContactItem(contact: Map<String, Any>, navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 8.dp)
+            .clickable { navController.navigate("friend_detail/$id") }, // Navigate when the row is clicked
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = name, modifier = Modifier.weight(1f), fontSize = 16.sp)
-        Button(onClick = {
-            navController.navigate("friend_detail/$id")
-        }) {
-            Text("View Details")
+        // Avatar placeholder
+        Box(
+            modifier = Modifier
+                .size(48.dp)
+                .clip(MaterialTheme.shapes.medium) // Rounded corners
+                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = name.firstOrNull()?.toString() ?: "?", // Show first letter as placeholder
+                fontSize = 20.sp,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        // Name
+        Text(
+            text = name,
+            fontSize = 16.sp,
+            modifier = Modifier.weight(1f)
+        )
     }
 }
