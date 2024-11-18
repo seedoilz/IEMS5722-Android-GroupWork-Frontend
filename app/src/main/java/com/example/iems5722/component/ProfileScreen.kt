@@ -132,7 +132,19 @@ fun ProfileScreen(navController: NavController) {
         )
 
         Spacer(modifier = Modifier.weight(1f))
-
+        // 改profile按钮
+        Button(
+            onClick = {
+                // 跳转到修改profile界面逻辑
+                navController.navigate("edit_profile")
+                Toast.makeText(context, "Edit Profile", Toast.LENGTH_SHORT).show()
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        ) {
+            Text(text = "Edit Profile")
+        }
         // 改密码按钮
         Button(
             onClick = {

@@ -24,6 +24,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.getValue
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.iems5722.component.ContactsScreen
+import com.example.iems5722.component.EditProfileScreen
 import com.example.iems5722.component.HomeScreen
 import com.example.iems5722.component.LoginScreen
 import com.example.iems5722.component.ProfileScreen
@@ -59,6 +60,7 @@ class MainActivity : ComponentActivity() {
                         composable("home") { HomeScreen() }
                         composable("contacts") { ContactsScreen() }
                         composable("profile") { ProfileScreen(navController) }
+                        composable("edit_profile") { EditProfileScreen(navController) }
                     }
                 }
             }
