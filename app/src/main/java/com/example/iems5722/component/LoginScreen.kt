@@ -112,13 +112,27 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TextButton(
-            onClick = {
-                // 点击注册按钮，跳转到注册界面
-                navController.navigate("register")
-            }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("Register here")
+            TextButton(
+                onClick = {
+                    // 点击注册按钮，跳转到注册界面
+                    navController.navigate("register")
+                }
+            ) {
+                Text("Register here")
+            }
+
+            TextButton(
+                onClick = {
+                    // 点击忘记密码按钮，跳转到忘记密码界面
+                    navController.navigate("forgot_password")
+                }
+            ) {
+                Text("Forgot Password?")
+            }
         }
     }
 }

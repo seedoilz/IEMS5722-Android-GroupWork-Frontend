@@ -29,6 +29,7 @@ import androidx.navigation.navArgument
 import com.example.iems5722.component.AddFriendScreen
 import com.example.iems5722.component.ContactsScreen
 import com.example.iems5722.component.EditProfileScreen
+import com.example.iems5722.component.ForgotPasswordScreen
 import com.example.iems5722.component.FriendDetailScreen
 import com.example.iems5722.component.HomeScreen
 import com.example.iems5722.component.LoginScreen
@@ -67,6 +68,7 @@ class MainActivity : ComponentActivity() {
                         composable("profile") { ProfileScreen(navController,loggedIn) }
                         composable("edit_profile") { EditProfileScreen(navController) }
                         composable("add_friend") { AddFriendScreen(navController) }
+                        composable("forgot_password") { ForgotPasswordScreen(navController, apiService) }
                         composable(
                             route = "friend_detail/{friendId}",
                             arguments = listOf(navArgument("friendId") { type = NavType.IntType })
