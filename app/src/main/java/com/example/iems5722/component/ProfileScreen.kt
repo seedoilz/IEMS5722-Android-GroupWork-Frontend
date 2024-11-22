@@ -67,10 +67,10 @@ fun ProfileScreen(navController: NavController, loggedIn: MutableState<Boolean>)
                 if (response.isSuccessful && response.body()?.code == 200) {
                     // 成功获取用户详情
                     response.body()?.data?.let {
-
+                        val dataMap = response.body()?.data as Map<*, *>
                         println(it.toString())
-                        userInfo.value.name = response.body()?.data?.get("name").toString()
-                        userInfo.value.email = response.body()?.data?.get("email").toString()
+                        userInfo.value.name = dataMap.get("name").toString()
+                        userInfo.value.email = dataMap.get("email").toString()
 
                     } ?: run {
                         Toast.makeText(context, "Failed to retrieve user details.", Toast.LENGTH_SHORT).show()

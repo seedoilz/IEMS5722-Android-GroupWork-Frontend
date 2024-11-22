@@ -38,9 +38,9 @@ data class Result (
     val message: kotlin.String? = null,
 
     @Json(name = "data")
-    val data: Map<String, Any?>? = null,
+    val data: Any? = null,
 
-) {
+    ) {
 
 
 }

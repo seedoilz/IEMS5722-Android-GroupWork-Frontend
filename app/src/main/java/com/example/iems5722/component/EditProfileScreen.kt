@@ -48,8 +48,9 @@ fun EditProfileScreen(navController: NavController) {
                 override fun onResponse(call: Call<org.openapitools.client.models.Result>, response: Response<org.openapitools.client.models.Result>) {
                     if (response.isSuccessful && response.body()?.code == 200) {
                         response.body()?.data?.let { data ->
-                            name.value = data["name"].toString()
-                            email.value = data["email"].toString()
+                            val dataMap = data as? Map<String, Any>
+                            name.value = dataMap?.get("name").toString()
+                            email.value = dataMap?.get("email").toString()
                         }
                     } else {
                         errorMessage.value = "Failed to load user details."

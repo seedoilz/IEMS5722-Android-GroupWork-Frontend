@@ -81,9 +81,10 @@ fun LoginScreen(
                 apiService.userSignInPost(userVO).enqueue(object : Callback<Result> {
                     override fun onResponse(call: Call<Result>, response: Response<Result>) {
                         if (response.isSuccessful && response.body()?.code == 200) {
+                            val dataMap = response.body()?.data as Map<String, Any>
                             // 获取返回的 token
-                            val token = response.body()?.data?.get("token")
-                            val userId = response.body()?.data?.get("id")
+                            val token = dataMap.get("token")
+                            val userId = dataMap.get("id")
                             // 保存 token 到 SharedPreferences
                             token?.let {
                                 saveTokenToPreferences(context, it.toString(), userId.toString())
