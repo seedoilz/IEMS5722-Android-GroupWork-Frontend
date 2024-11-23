@@ -27,6 +27,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import com.example.iems5722.component.AddFriendScreen
+import com.example.iems5722.component.ChatroomScreen
 import com.example.iems5722.component.ContactsScreen
 import com.example.iems5722.component.EditProfileScreen
 import com.example.iems5722.component.ForgotPasswordScreen
@@ -63,7 +64,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         composable("login") { LoginScreen(navController,loggedIn, apiService) }
                         composable("register") { RegisterScreen(navController, apiService) }
-                        composable("home") { HomeScreen() }
+                        composable("home") { HomeScreen(navController) }
                         composable("contacts") { ContactsScreen(navController) }
                         composable("profile") { ProfileScreen(navController,loggedIn) }
                         composable("edit_profile") { EditProfileScreen(navController) }
@@ -75,6 +76,10 @@ class MainActivity : ComponentActivity() {
                         ) { backStackEntry ->
                             val friendId = backStackEntry.arguments?.getInt("friendId") ?: -1
                             FriendDetailScreen(friendId, navController)
+                        }
+                        composable("chat/{chatName}") { backStackEntry ->
+                            val chatName = backStackEntry.arguments?.getString("chatName") ?: "Unknown"
+                            ChatroomScreen(chatName, navController)
                         }
                     }
                 }

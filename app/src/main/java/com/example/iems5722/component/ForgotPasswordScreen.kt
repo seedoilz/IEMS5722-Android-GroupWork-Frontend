@@ -55,7 +55,7 @@ fun ForgotPasswordScreen(navController: NavController, apiService: DefaultApi) {
                     return@Button
                 }
 
-//                // 调用忘记密码API逻辑
+//                TODO 调用忘记密码API逻辑
 //                apiService.userForgotPasswordPost(email.value).enqueue(object : Callback<Result> {
 //                    override fun onResponse(call: Call<Result>, response: Response<Result>) {
 //                        if (response.isSuccessful && response.body()?.code == 200) {
