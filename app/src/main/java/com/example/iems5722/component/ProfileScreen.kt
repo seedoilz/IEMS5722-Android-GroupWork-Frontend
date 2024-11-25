@@ -30,11 +30,16 @@ import retrofit2.Call
 import retrofit2.Response
 import org.openapitools.client.models.Result
 import com.example.iems5722.R
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 
 @Composable
 fun ProfileScreen(navController: NavController, loggedIn: MutableState<Boolean>) {
     val context = LocalContext.current
+//    val avatarUrl = remember { mutableStateOf<String?>(null) }
     val userInfo = remember { mutableStateOf(User(name = "Unknown User", avatarUrl = "", email = "Unknown Email")) }
+    val errorMessage = remember { mutableStateOf<String?>(null) }
     val userId = getUserId(context)?.toIntOrNull()
     val token = context.getSharedPreferences("AppPreferences", MODE_PRIVATE).getString("token", null)
     println("Retrieved token: $token")
@@ -68,8 +73,9 @@ fun ProfileScreen(navController: NavController, loggedIn: MutableState<Boolean>)
                         userInfo.value = userInfo.value.copy(
                             name = dataMap["name"].toString(),
                             email = dataMap["email"].toString(),
-                            avatarUrl = dataMap["avatarUrl"].toString()
+                            avatarUrl = dataMap["avatar_url"].toString(),
                         )
+                        println("avatarUrl: ${userInfo.value.avatarUrl}")
                     } ?: run {
                         Toast.makeText(context, "获取用户详情失败。", Toast.LENGTH_SHORT).show()
                     }
@@ -84,13 +90,38 @@ fun ProfileScreen(navController: NavController, loggedIn: MutableState<Boolean>)
         })
     }
 
-    val imageUri = remember { mutableStateOf<Uri?>(null) }
+    var imageUri = remember { mutableStateOf<Uri?>(null) }
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
         imageUri.value = uri
+        println("imageUri.value: ${imageUri.value}")
         uri?.let {
             // 在这里实现将图片上传到服务器的逻辑
             Toast.makeText(context, "选择的头像: $uri", Toast.LENGTH_SHORT).show()
             // TODO: 实现图片上传API调用逻辑
+            val contentResolver = context.contentResolver
+            val inputStream = contentResolver.openInputStream(uri)
+            inputStream?.let { stream ->
+                val byteArray = stream.readBytes()
+                val requestBody = byteArray.toRequestBody("image/*".toMediaTypeOrNull())
+                val part = MultipartBody.Part.createFormData("file", "avatar.jpg", requestBody)
+
+                // 调用图片上传API
+                apiService.imageUploadAvatarPost(part).enqueue(object : Callback<Result> {
+                    override fun onResponse(call: Call<Result>, response: Response<Result>) {
+                        if (response.isSuccessful && response.body()?.code == 200) {
+                            response.body()?.let { result ->
+                                userInfo.value.avatarUrl = result.message
+                            }
+                        } else {
+                            errorMessage.value = "Failed to load user details."
+                        }
+                    }
+                    override fun onFailure(call: Call<Result>, t: Throwable) {
+                        errorMessage.value = "Network error: ${t.message}"
+                    }
+                })
+            }
+
         }
     }
 
@@ -110,6 +141,7 @@ fun ProfileScreen(navController: NavController, loggedIn: MutableState<Boolean>)
                     userInfo.value.avatarUrl?.isNotEmpty() == true && userInfo.value.avatarUrl != "null" -> rememberAsyncImagePainter(model = userInfo.value.avatarUrl)
                     else -> painterResource(id = R.drawable.default_avatar)
                 },
+
                 contentDescription = "用户头像",
                 modifier = Modifier
                     .size(100.dp)
